@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>正则表达式在线验证</title>
+		<style type="text/css">
+			
+		</style>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.css"/>
+	</head>
+
+	<body>
+		<div class="regex" ng-app="my-app" ng-controller="reg" class="container">
+			<textarea class="form-control" ng-model='str' type="text" id="str" value="" placeholder="输入被验证的字符串"></textarea><br>
+			<input class="form-control" ng-model="regStr" type="text" id="regStr" value="" placeholder="输入正则表达式" />
+			<div class="auto_complete">
+				<a class="btn btn-default" ng-repeat="x in autoC" ng-bind="x"></a>
+			</div>
+			<br>
+			<label ng-show="whether">匹配结果:<p ng-bind="whether"></p></label>
+			<label ng-show="exec">符合匹配：<p ng-bind="exec"></p></label>
+		</div>
+		<script src="js/jquery.js" type="text/javascript" charset="utf-8"></script>
+		<script src="http://cdn.static.runoob.com/libs/angular.js/1.4.6/angular.min.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			app = angular.module('my-app', []);
+			app.controller('reg', function($scope) {
+
+				$scope.str = '';
+				$scope.regStr = '';
+				$scope.whether = '';
+				$scope.exec = '';
+				$scope.$watch('str', function() {
+					$scope.matchReg()
+				});
+				$scope.$watch('regStr', function() {
+					$scope.matchReg()
+				});
+				$scope.matchReg = function() {
+					if($scope.str == "" || $scope.regStr == "") {
+						return;
+					}
+					try {
+						var patt = new RegExp(eval($scope.regStr));
+					} catch(e) {
+						$scope.whether = '';
+						$scope.exec = '';
+						if(isReg($scope.regStr)) {
+							$scope.exec = "错误的正则表达式";
+						}
+						return;
+					}
+					$scope.whether = patt.test($scope.str);
+					$scope.exec = patt.exec($scope.str);
+					if($scope.exec == null) {
+						$scope.exec = '正则匹配不成功';
+					}
+				}
+				 $scope.autoC=['(',')','{','}','|',']','[',
+				 '\\b','\\B','\\d','\\D','\\f','\\n','\\r','\\s',
+				 '\\S','\\t','\\v','\\w','\\W','$',
+				 '*','+',"?",'\\','^',",",'=',':','!','<','>','-'];
+				$scope.toString = function() {
+					console.log($scope.str + ' ' + $scope.regStr + ' ' + $scope.whether);
+				}
+
+				function isReg(str) {
+					var p = new RegExp(/\/([\s\S]*)\/[\w]*/)
+					return p.test(str);
+				}
+			
+				$(function () { 
+					$(".auto_complete a[class~='btn']").click(function () { 
+						$("#regStr").val($("#regStr").val()+$(this).text()); //console.log($(this))
+						$("#regStr").focus();
+					})
+				})
+				
+			});
+		</script>
+	</body>
+
+</html>
